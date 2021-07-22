@@ -13,6 +13,7 @@ def lamba_handler(event, context):
     region = 'us-east-1'
     bucket_name = 'bucket_name'
     csv_list_items = [] #For read rows in the csv file
+    table_name = 'TableDynamo'
 
     #Connections -> https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html
     s3 = boto3.client('s3') #S3 only can be a client
@@ -29,7 +30,29 @@ def lamba_handler(event, context):
         csv_list_items = csv_file['Body'].read().decode('utf-8').split('\n')   
         #Split values by separator or commas
         csv_reader = csv.reader(csv_list_items, delimiter=',', quotechar='*')
-
+        
+        #for loop to take each item of thw row
+        for item in csv_reader:
+            if item:
+                dynamo_item1 = item[0]
+                dynamo_item2 = item[1]
+                dynamo_item3 = item[2]
+                
+                try:
+                    #conditions for write well on dynamo (cast, etc)
+                    add_dynamo_items = dynamo.put_item(
+                        TableName = table_name,
+                        Item = {
+                            'NOMBRECOLDYNAMO1': { 'N': dynamo_item1 }, #format, value
+                            'NOMBRECOLDYNAMO2': { 'S': dynamo_item2 },
+                            'NOMBRECOLDYNAMO3': { 'S': dynamo_item3 }
+                        }
+                    )
+                except Exception as error:
+                    print(error)
+                    #maybe other try except for exceptional items/rows
+                
+                
     ######JSON EXAMPLE#####
 
     #For requests execution status APIs

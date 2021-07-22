@@ -53,7 +53,6 @@ def lamba_handler(event, context):
                     print(error)
                     #maybe other try except for exceptional items/rows
                 
-                
     ######JSON EXAMPLE#####
     #For insert JSON file to dynamo we will use dynamo as resource
     dynamodb = boto3.resource('dynamodb')
@@ -61,8 +60,8 @@ def lamba_handler(event, context):
         json_list = json.load(json_file, parse_float=Decimal)
     
     for item in json_list:
-        dynamodb.Table(table_name).put_item(Item=item)
-    
+        dynamodb.Table(table_name).put_item(Item=item)    
+
     #For requests execution status APIs
     return{
         'statusCode': 200,

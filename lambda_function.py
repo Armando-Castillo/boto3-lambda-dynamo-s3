@@ -62,6 +62,15 @@ def lamba_handler(event, context):
     for item in json_list:
         dynamodb.Table(table_name).put_item(Item=item)    
 
+
+    #In s3 put event -> gets key
+    json_event_file = event['Records'][0]['s3']['object']['key']
+    json_object = s3.get_object(Bucket = bucket_name, Key = json_event_file)
+    #Decode file
+    json_file_s3 = json_object['Body'].read()
+    json_dict = json.loads(json_file_s3)
+    dynamodb.table(table_name).put_item(Item=json_dict)
+    
     #For requests execution status APIs
     return{
         'statusCode': 200,
